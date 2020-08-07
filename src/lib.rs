@@ -1,3 +1,5 @@
+pub mod crc;
+
 #[cfg(test)]
 mod tests {
     #[test]
