@@ -1,2 +1,3 @@
 # sensirion-i2c-rs
-Rust library with common functionality for our I2C sensors
+
+Rust library with common functionality for I2C based sensors from Sensirion.
