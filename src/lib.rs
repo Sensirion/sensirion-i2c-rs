@@ -2,6 +2,7 @@
 #![cfg_attr(not(test), no_std)]
 
 pub mod crc;
+pub mod i2c;
 
 #[cfg(test)]
 mod tests {
