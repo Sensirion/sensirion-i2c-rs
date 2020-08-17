@@ -33,13 +33,13 @@ pub fn validate(buf: &[u8]) -> Result<(), ()> {
 
 #[cfg(test)]
 mod tests {
-    use crate::crc;
+    use crate::crc8;
 
     /// Test the crc function against the test value provided in the SHTC3 datasheet (section
     /// 5.10).
     #[test]
     fn crc8_test_value() {
-        assert_eq!(crc::calculate(&[0x00]), 0xac);
-        assert_eq!(crc::calculate(&[0xbe, 0xef]), 0x92);
+        assert_eq!(crc8::calculate(&[0x00]), 0xac);
+        assert_eq!(crc8::calculate(&[0xbe, 0xef]), 0x92);
     }
 }
