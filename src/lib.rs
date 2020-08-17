@@ -1,7 +1,7 @@
 #![deny(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
 
-pub mod crc;
+pub mod crc8;
 pub mod i2c;
 
 #[cfg(test)]

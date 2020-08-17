@@ -1,4 +1,4 @@
-use crate::crc;
+use crate::crc8;
 use embedded_hal::blocking::i2c;
 
 /// All possible errors in this crate
@@ -35,5 +35,5 @@ pub fn read_words_with_crc<I2c: i2c::Read + i2c::Write>(
         "Buffer must hold a multiple of 3 bytes"
     );
     i2c.try_read(addr, data).map_err(Error::I2cRead)?;
-    crc::validate(data).map_err(|_| Error::Crc)
+    crc8::validate(data).map_err(|_| Error::Crc)
 }
