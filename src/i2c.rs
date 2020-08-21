@@ -15,7 +15,7 @@ pub fn write_command<I2cWrite: i2c::Write>(
     addr: u8,
     command: u16,
 ) -> Result<(), I2cWrite::Error> {
-    i2c.try_write(addr, &command.to_be_bytes())
+    i2c.write(addr, &command.to_be_bytes())
 }
 
 /// Read data into the provided buffer and validate the CRC8 checksum.
@@ -34,6 +34,6 @@ pub fn read_words_with_crc<I2c: i2c::Read + i2c::Write>(
         data.len() % 3 == 0,
         "Buffer must hold a multiple of 3 bytes"
     );
-    i2c.try_read(addr, data).map_err(Error::I2cRead)?;
+    i2c.read(addr, data).map_err(Error::I2cRead)?;
     crc8::validate(data).map_err(|_| Error::Crc)
 }
