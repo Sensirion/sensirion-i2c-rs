@@ -42,4 +42,24 @@ mod tests {
         assert_eq!(crc8::calculate(&[0x00]), 0xac);
         assert_eq!(crc8::calculate(&[0xbe, 0xef]), 0x92);
     }
+
+    #[test]
+    fn crc8_validate_empty() {
+        crc8::validate(&[]).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn crc8_validate_not_enough_data() {
+        crc8::validate(&[0xbe]).unwrap();
+    }
+
+    #[test]
+    fn crc8_validate() {
+        // Valid CRC
+        crc8::validate(&[0xbe, 0xef, 0x92]).unwrap();
+
+        // Invalid CRC
+        assert_eq!(crc8::validate(&[0xbe, 0xef, 0x91]), Err(()));
+    }
 }

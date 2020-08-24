@@ -37,3 +37,42 @@ pub fn read_words_with_crc<I2c: i2c::Read + i2c::Write>(
     i2c.read(addr, data).map_err(Error::I2cRead)?;
     crc8::validate(data).map_err(|_| Error::Crc)
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::i2c;
+
+    use embedded_hal_mock as hal;
+    use hal::i2c::{Mock as I2cMock, Transaction};
+
+    #[test]
+    fn read_words_with_crc() {
+        let mut buf = [0; 3];
+
+        // Valid CRC
+        let expectations = [Transaction::read(0x58, vec![0xBE, 0xEF, 0x92])];
+        let mut mock = I2cMock::new(&expectations);
+        i2c::read_words_with_crc(&mut mock, 0x58, &mut buf).unwrap();
+        assert_eq!(buf, [0xbe, 0xef, 0x92]);
+
+        // Invalid CRC
+        let expectations = [Transaction::read(0x58, vec![0xBE, 0xEF, 0x00])];
+        let mut mock = I2cMock::new(&expectations);
+        match i2c::read_words_with_crc(&mut mock, 0x58, &mut buf) {
+            Err(i2c::Error::Crc) => {}
+            Err(_) => panic!("Invalid error: Must be Crc"),
+            Ok(_) => panic!("CRC check did not fail"),
+        }
+        assert_eq!(buf, [0xbe, 0xef, 0x00]); // Buf was changed
+    }
+
+    #[test]
+    fn write_command() {
+        let expectations = [Transaction::write(0x58, vec![0xab, 0xcd])];
+        let mut mock = I2cMock::new(&expectations);
+
+        i2c::write_command(&mut mock, 0x58, 0xabcd).unwrap();
+
+        mock.done();
+    }
+}
