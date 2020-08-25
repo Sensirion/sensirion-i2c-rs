@@ -1,3 +1,5 @@
+//! Helper functions for CRC8 checksum validation
+
 /// Calculate the CRC8 checksum.
 pub fn calculate(data: &[u8]) -> u8 {
     const CRC8_POLYNOMIAL: u8 = 0x31;

@@ -1,3 +1,5 @@
+//! Helper functions for the u16 word based I²C communication.
+
 use crate::crc8;
 use embedded_hal::blocking::i2c;
 
