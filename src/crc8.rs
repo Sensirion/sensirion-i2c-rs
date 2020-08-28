@@ -1,3 +1,5 @@
+//! Helper functions for CRC8 checksum validation
+
 /// Calculate the CRC8 checksum.
 pub fn calculate(data: &[u8]) -> u8 {
     const CRC8_POLYNOMIAL: u8 = 0x31;
@@ -15,8 +17,10 @@ pub fn calculate(data: &[u8]) -> u8 {
     crc
 }
 
-/// Iterate over the provided buffer and validate the CRC8 checksum.
+/// Iterate over the provided buffer and validate the CRC8 checksums.
 ///
+/// The buffer must be in the form of `[d0, d1, crc01, d2, d3, crc23, ...]` where every third byte
+/// is the checksum byte of the previous two bytes
 /// If the checksum is wrong, return `Err`.
 ///
 /// Note: This method will consider every third byte a checksum byte. If the buffer size is not a
