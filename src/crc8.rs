@@ -23,12 +23,14 @@ pub fn calculate(data: &[u8]) -> u8 {
 /// is the checksum byte of the previous two bytes
 /// If the checksum is wrong, return `Err`.
 ///
-/// Note: This method will consider every third byte a checksum byte. If the buffer size is not a
-/// multiple of 3, then not all data will be validated.
+/// # Panics
+///
+/// This method will consider every third byte a checksum byte. If the buffer size is not a
+/// multiple of 3, then it will panic.
 pub fn validate(buf: &[u8]) -> Result<(), ()> {
-    debug_assert!(buf.len() % 3 == 0, "Buffer must be a multiple of 3");
+    assert!(buf.len() % 3 == 0, "Buffer must be a multiple of 3");
     for chunk in buf.chunks(3) {
-        if chunk.len() == 3 && calculate(&[chunk[0], chunk[1]]) != chunk[2] {
+        if calculate(&[chunk[0], chunk[1]]) != chunk[2] {
             return Err(());
         }
     }
