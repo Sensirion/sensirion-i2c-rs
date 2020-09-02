@@ -2,6 +2,7 @@
 name = "sensirion-i2c"
 version = "0.1.1"
 authors = ["Raphael Nestler <raphael.nestler@sensirion.com>"]
+documentation = "https://docs.rs/sensirion-i2c"
 description = "Common functionality for I2C based sensors from Sensirion"
 readme = "README.md"
 keywords = ["I2C", "Sensirion"]
