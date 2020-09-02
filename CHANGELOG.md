@@ -4,6 +4,8 @@ This project follows [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.1] (2020-09-02)
+
 ### Changed
 
  * Panic in `crc8::validate` and `i2c::read_words_with_crc` if buffer size is
@@ -16,4 +18,6 @@ This project follows [semantic versioning](https://semver.org/).
  * Initial version which implements the CRC-8 algorithm commonly used by
    Sensirion's sensors and a few I2C helper functions.
 
+[Unreleased]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.1.1..master
+[0.1.1]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.1.0..v0.1.1
 [0.1.0]: https://github.com/Sensirion/sensirion-i2c-rs/releases/tag/v0.1.0

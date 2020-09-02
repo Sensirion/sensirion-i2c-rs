@@ -1,6 +1,6 @@
 [package]
 name = "sensirion-i2c"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Raphael Nestler <raphael.nestler@sensirion.com>"]
 description = "Common functionality for I2C based sensors from Sensirion"
 readme = "README.md"
