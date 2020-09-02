@@ -24,15 +24,16 @@ pub fn write_command<I2cWrite: i2c::Write>(
 ///
 /// If the checksum is wrong, return `Error::Crc`.
 ///
-/// Note: This method will consider every third byte a checksum byte. If
-/// the buffer size is not a multiple of 3, then not all data will be
-/// validated.
+/// # Panics
+///
+/// This method will consider every third byte a checksum byte. If the buffer size is not a
+/// multiple of 3, then it will panic.
 pub fn read_words_with_crc<I2c: i2c::Read + i2c::Write>(
     i2c: &mut I2c,
     addr: u8,
     data: &mut [u8],
 ) -> Result<(), Error<I2c, I2c>> {
-    debug_assert!(
+    assert!(
         data.len() % 3 == 0,
         "Buffer must hold a multiple of 3 bytes"
     );
