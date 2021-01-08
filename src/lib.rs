@@ -7,12 +7,15 @@
 //!
 //! ```
 //! use sensirion_i2c::crc8;
+//! use sensirion_i2c::i2c_buffer::I2cBuffer;
+//! use sensirion_i2c::i2c_buffer::Appendable;
 //!
-//! let data = [0xbe, 0xef];
-//! let crc = crc8::calculate(&data);
+//! let data: u16 = 0xbeef;
 //!
-//! let data = [0xbe, 0xef, crc];
-//! assert_eq!(Ok(()), crc8::validate(&data));
+//! let mut i2c_buffer = I2cBuffer::<12>::new();
+//! i2c_buffer.append(data).unwrap();
+//!
+//! assert!(i2c_buffer.validate().is_ok());
 //! ```
 //!
 //! ### I2C
@@ -28,8 +31,10 @@
 //! i2c::write_command(&mut i2c_mock, 0x12, 0x3456);
 //! ```
 
+#![deny(missing_docs)]
 #![deny(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
 
 pub mod crc8;
 pub mod i2c;
+pub mod i2c_buffer;
