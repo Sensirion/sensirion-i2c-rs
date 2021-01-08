@@ -31,5 +31,26 @@
 #![deny(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
 
+use embedded_hal::blocking::i2c::Write;
+use embedded_hal::blocking::i2c::Read;
+
+/// All possible errors in this crate
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub enum Error<I2cWrite: Write, I2cRead: Read> {
+    I2cWrite(I2cWrite::Error),
+    I2cRead(I2cRead::Error),
+    WrongBufferSize,
+    WrongCrc,
+}
+
+impl<I2cWrite: Write, I2cRead: Read> From<crc8::Error> for Error<I2cWrite, I2cRead> {
+    fn from(err: crc8::Error) -> Self {
+        match err {
+            crc8::Error::WrongBufferSize => Error::WrongBufferSize,
+            crc8::Error::WrongCrc => Error::WrongCrc
+        }
+    }
+}
+
 pub mod crc8;
 pub mod i2c;

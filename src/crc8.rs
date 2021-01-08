@@ -1,5 +1,11 @@
 //! Helper functions for CRC8 checksum validation
 
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub enum Error {
+    WrongBufferSize,
+    WrongCrc,
+}
+
 /// Calculate the CRC8 checksum.
 pub fn calculate(data: &[u8]) -> u8 {
     const CRC8_POLYNOMIAL: u8 = 0x31;
@@ -17,12 +23,6 @@ pub fn calculate(data: &[u8]) -> u8 {
     crc
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub enum Error {
-    WrongCrc,
-    WrongBufferSize,
-}
-
 /// Iterate over the provided buffer and validate the CRC8 checksums.
 ///
 /// The buffer must be in the form of `[d0, d1, crc01, d2, d3, crc23, ...]` where every third byte
@@ -37,7 +37,7 @@ pub fn validate(buf: &[u8]) -> Result<(), Error> {
     }
     for chunk in buf.chunks(3) {
         if calculate(&[chunk[0], chunk[1]]) != chunk[2] {
-            return Err(Error::WrongCrc);
+            return Err(Error::WrongCrc)
         }
     }
     Ok(())
