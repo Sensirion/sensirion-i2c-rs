@@ -37,7 +37,7 @@ pub fn validate(buf: &[u8]) -> Result<(), Error> {
     }
     for chunk in buf.chunks(3) {
         if calculate(&[chunk[0], chunk[1]]) != chunk[2] {
-            return Err(Error::WrongCrc)
+            return Err(Error::WrongCrc);
         }
     }
     Ok(())

@@ -1,8 +1,8 @@
 //! Helper functions for the u16 word based I²C communication.
 
 use crate::crc8;
-use embedded_hal::blocking::i2c;
 use crate::Error;
+use embedded_hal::blocking::i2c;
 
 /// Write an u16 command to the I²C bus.
 pub fn write_command<I2cWrite: i2c::Write>(
@@ -25,7 +25,7 @@ pub fn read_words_with_crc<I2c: i2c::Read + i2c::Write>(
     data: &mut [u8],
 ) -> Result<(), Error<I2c, I2c>> {
     if data.len() % 3 != 0 {
-        return Err(Error::WrongBufferSize)
+        return Err(Error::WrongBufferSize);
     }
     i2c.read(addr, data).map_err(Error::I2cRead)?;
     Ok(crc8::validate(data)?)
