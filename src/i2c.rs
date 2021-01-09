@@ -1,7 +1,7 @@
 //! Helper functions for the u16 word based I²C communication.
 
 use crate::crc8;
-use crate::Error;
+pub use crate::Error;
 use embedded_hal::blocking::i2c;
 
 /// Write an u16 command to the I²C bus.
