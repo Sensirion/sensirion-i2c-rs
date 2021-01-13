@@ -11,6 +11,14 @@ pub enum Error<I2cWrite: i2c::Write, I2cRead: i2c::Read> {
     Crc,
 }
 
+impl<W: i2c::Write, R: i2c::Read> From<crc8::Error> for Error<W, R> {
+    fn from(err: crc8::Error) -> Error<W, R> {
+        match err {
+            crc8::Error::CrcError => Error::Crc,
+        }
+    }
+}
+
 /// Write an u16 command to the I²C bus.
 pub fn write_command<I2cWrite: i2c::Write>(
     i2c: &mut I2cWrite,
@@ -38,7 +46,8 @@ pub fn read_words_with_crc<I2c: i2c::Read + i2c::Write>(
         "Buffer must hold a multiple of 3 bytes"
     );
     i2c.read(addr, data).map_err(Error::I2cRead)?;
-    crc8::validate(data).map_err(|_| Error::Crc)
+    crc8::validate(data)?;
+    Ok(())
 }
 
 #[cfg(test)]
