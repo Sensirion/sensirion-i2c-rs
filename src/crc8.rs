@@ -1,5 +1,12 @@
 //! Helper functions for CRC8 checksum validation
 
+/// Errors which can happen in the crc8 module
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Error {
+    /// CRC validation failed
+    CrcError,
+}
+
 /// Calculate the CRC8 checksum.
 pub fn calculate(data: &[u8]) -> u8 {
     const CRC8_POLYNOMIAL: u8 = 0x31;
@@ -27,11 +34,11 @@ pub fn calculate(data: &[u8]) -> u8 {
 ///
 /// This method will consider every third byte a checksum byte. If the buffer size is not a
 /// multiple of 3, then it will panic.
-pub fn validate(buf: &[u8]) -> Result<(), ()> {
+pub fn validate(buf: &[u8]) -> Result<(), Error> {
     assert!(buf.len() % 3 == 0, "Buffer must be a multiple of 3");
     for chunk in buf.chunks(3) {
         if calculate(&[chunk[0], chunk[1]]) != chunk[2] {
-            return Err(());
+            return Err(Error::CrcError);
         }
     }
     Ok(())
@@ -66,6 +73,9 @@ mod tests {
         crc8::validate(&[0xbe, 0xef, 0x92]).unwrap();
 
         // Invalid CRC
-        assert_eq!(crc8::validate(&[0xbe, 0xef, 0x91]), Err(()));
+        assert_eq!(
+            crc8::validate(&[0xbe, 0xef, 0x91]),
+            Err(crc8::Error::CrcError)
+        );
     }
 }

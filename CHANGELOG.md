@@ -4,6 +4,12 @@ This project follows [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+ * Add a separate error type for the crc8 module to allow for
+   `From<crc8::Error>` implementations.
+   ([#18](https://github.com/Sensirion/sensirion-i2c-rs/pull/18/))
+
 ## [0.1.1] (2020-09-02)
 
 ### Changed
