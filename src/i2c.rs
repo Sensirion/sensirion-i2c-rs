@@ -1,4 +1,4 @@
-//! Helper functions for the u16 word based I²C communication.
+//! Helper functions for I²C communication.
 
 use crate::crc8;
 use embedded_hal::blocking::i2c;
@@ -20,7 +20,26 @@ impl<W: i2c::Write, R: i2c::Read> From<crc8::Error> for Error<W, R> {
 }
 
 /// Write an u16 command to the I²C bus.
+#[deprecated(note = "Please use `write_command_u16` instead.")]
 pub fn write_command<I2cWrite: i2c::Write>(
+    i2c: &mut I2cWrite,
+    addr: u8,
+    command: u16,
+) -> Result<(), I2cWrite::Error> {
+    write_command_u16(i2c, addr, command)
+}
+
+/// Write an u8 command to the I²C bus.
+pub fn write_command_u8<I2cWrite: i2c::Write>(
+    i2c: &mut I2cWrite,
+    addr: u8,
+    command: u8,
+) -> Result<(), I2cWrite::Error> {
+    i2c.write(addr, &command.to_be_bytes())
+}
+
+/// Write an u16 command to the I²C bus.
+pub fn write_command_u16<I2cWrite: i2c::Write>(
     i2c: &mut I2cWrite,
     addr: u8,
     command: u16,
@@ -79,11 +98,32 @@ mod tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn write_command() {
         let expectations = [Transaction::write(0x58, vec![0xab, 0xcd])];
         let mut mock = I2cMock::new(&expectations);
 
         i2c::write_command(&mut mock, 0x58, 0xabcd).unwrap();
+
+        mock.done();
+    }
+
+    #[test]
+    fn write_command_u8() {
+        let expectations = [Transaction::write(0x58, vec![0xab])];
+        let mut mock = I2cMock::new(&expectations);
+
+        i2c::write_command_u8(&mut mock, 0x58, 0xab).unwrap();
+
+        mock.done();
+    }
+
+    #[test]
+    fn write_command_u16() {
+        let expectations = [Transaction::write(0x58, vec![0xab, 0xcd])];
+        let mut mock = I2cMock::new(&expectations);
+
+        i2c::write_command_u16(&mut mock, 0x58, 0xabcd).unwrap();
 
         mock.done();
     }
