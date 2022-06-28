@@ -25,7 +25,7 @@
 //!
 //! let expectations = [I2cTransaction::write(0x12, vec![0x34, 0x56])];
 //! let mut i2c_mock = I2cMock::new(&expectations);
-//! i2c::write_command(&mut i2c_mock, 0x12, 0x3456);
+//! i2c::write_command_u16(&mut i2c_mock, 0x12, 0x3456);
 //! ```
 
 #![deny(unsafe_code)]
