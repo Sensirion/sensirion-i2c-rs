@@ -4,6 +4,8 @@ This project follows [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] (2022-11-28)
+
 ### Changed
 
  * Add a separate error type for the crc8 module to allow for
@@ -24,6 +26,7 @@ This project follows [semantic versioning](https://semver.org/).
  * Initial version which implements the CRC-8 algorithm commonly used by
    Sensirion's sensors and a few I2C helper functions.
 
-[Unreleased]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.1.1..master
+[Unreleased]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.2.0..master
+[0.2.0]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.1.1..v0.2.0
 [0.1.1]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.1.0..v0.1.1
 [0.1.0]: https://github.com/Sensirion/sensirion-i2c-rs/releases/tag/v0.1.0
