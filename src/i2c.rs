@@ -1,18 +1,18 @@
 //! Helper functions for I²C communication.
 
 use crate::crc8;
-use embedded_hal::blocking::i2c;
+use embedded_hal::i2c;
 
 /// All possible errors in this crate
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub enum Error<I2cWrite: i2c::Write, I2cRead: i2c::Read> {
-    I2cWrite(I2cWrite::Error),
-    I2cRead(I2cRead::Error),
+pub enum Error<I: i2c::I2c> {
+    I2cWrite(I::Error),
+    I2cRead(I::Error),
     Crc,
 }
 
-impl<W: i2c::Write, R: i2c::Read> From<crc8::Error> for Error<W, R> {
-    fn from(err: crc8::Error) -> Error<W, R> {
+impl<I: i2c::I2c> From<crc8::Error> for Error<I> {
+    fn from(err: crc8::Error) -> Error<I> {
         match err {
             crc8::Error::CrcError => Error::Crc,
         }
@@ -21,29 +21,17 @@ impl<W: i2c::Write, R: i2c::Read> From<crc8::Error> for Error<W, R> {
 
 /// Write an u16 command to the I²C bus.
 #[deprecated(note = "Please use `write_command_u16` instead.")]
-pub fn write_command<I2cWrite: i2c::Write>(
-    i2c: &mut I2cWrite,
-    addr: u8,
-    command: u16,
-) -> Result<(), I2cWrite::Error> {
+pub fn write_command<I: i2c::I2c>(i2c: &mut I, addr: u8, command: u16) -> Result<(), I::Error> {
     write_command_u16(i2c, addr, command)
 }
 
 /// Write an u8 command to the I²C bus.
-pub fn write_command_u8<I2cWrite: i2c::Write>(
-    i2c: &mut I2cWrite,
-    addr: u8,
-    command: u8,
-) -> Result<(), I2cWrite::Error> {
+pub fn write_command_u8<I: i2c::I2c>(i2c: &mut I, addr: u8, command: u8) -> Result<(), I::Error> {
     i2c.write(addr, &command.to_be_bytes())
 }
 
 /// Write an u16 command to the I²C bus.
-pub fn write_command_u16<I2cWrite: i2c::Write>(
-    i2c: &mut I2cWrite,
-    addr: u8,
-    command: u16,
-) -> Result<(), I2cWrite::Error> {
+pub fn write_command_u16<I: i2c::I2c>(i2c: &mut I, addr: u8, command: u16) -> Result<(), I::Error> {
     i2c.write(addr, &command.to_be_bytes())
 }
 
@@ -55,11 +43,11 @@ pub fn write_command_u16<I2cWrite: i2c::Write>(
 ///
 /// This method will consider every third byte a checksum byte. If the buffer size is not a
 /// multiple of 3, then it will panic.
-pub fn read_words_with_crc<I2c: i2c::Read + i2c::Write>(
-    i2c: &mut I2c,
+pub fn read_words_with_crc<I: i2c::I2c>(
+    i2c: &mut I,
     addr: u8,
     data: &mut [u8],
-) -> Result<(), Error<I2c, I2c>> {
+) -> Result<(), Error<I>> {
     assert!(
         data.len() % 3 == 0,
         "Buffer must hold a multiple of 3 bytes"
@@ -74,27 +62,33 @@ mod tests {
     use crate::i2c;
 
     use embedded_hal_mock as hal;
-    use hal::i2c::{Mock as I2cMock, Transaction};
+    use hal::eh1::i2c::{Mock as I2cMock, Transaction};
 
     #[test]
     fn read_words_with_crc() {
         let mut buf = [0; 3];
 
         // Valid CRC
-        let expectations = [Transaction::read(0x58, vec![0xBE, 0xEF, 0x92])];
-        let mut mock = I2cMock::new(&expectations);
-        i2c::read_words_with_crc(&mut mock, 0x58, &mut buf).unwrap();
-        assert_eq!(buf, [0xbe, 0xef, 0x92]);
+        {
+            let expectations = [Transaction::read(0x58, vec![0xBE, 0xEF, 0x92])];
+            let mut mock = I2cMock::new(&expectations);
+            i2c::read_words_with_crc(&mut mock, 0x58, &mut buf).unwrap();
+            assert_eq!(buf, [0xbe, 0xef, 0x92]);
+            mock.done();
+        }
 
         // Invalid CRC
-        let expectations = [Transaction::read(0x58, vec![0xBE, 0xEF, 0x00])];
-        let mut mock = I2cMock::new(&expectations);
-        match i2c::read_words_with_crc(&mut mock, 0x58, &mut buf) {
-            Err(i2c::Error::Crc) => {}
-            Err(_) => panic!("Invalid error: Must be Crc"),
-            Ok(_) => panic!("CRC check did not fail"),
+        {
+            let expectations = [Transaction::read(0x58, vec![0xBE, 0xEF, 0x00])];
+            let mut mock = I2cMock::new(&expectations);
+            match i2c::read_words_with_crc(&mut mock, 0x58, &mut buf) {
+                Err(i2c::Error::Crc) => {}
+                Err(_) => panic!("Invalid error: Must be Crc"),
+                Ok(_) => panic!("CRC check did not fail"),
+            }
+            assert_eq!(buf, [0xbe, 0xef, 0x00]); // Buf was changed
+            mock.done();
         }
-        assert_eq!(buf, [0xbe, 0xef, 0x00]); // Buf was changed
     }
 
     #[test]
