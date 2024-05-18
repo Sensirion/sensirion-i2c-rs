@@ -28,9 +28,22 @@
 //! i2c::write_command_u16(&mut i2c_mock, 0x12, 0x3456);
 //! i2c_mock.done();
 //! ```
+//!
+//! #### `embedded-hal-async`
+//!
+//! The `i2c_async` module provides versions of the I2C helpers in this crate
+//! that use the [`embedded-hal-async`
+//! crate](https://crates.io/crates/embedded-hal-async), rather than the
+//! blocking I2C traits from `embedded-hal`.
+//!
+//! This module is only available when the `embedded-hal-async`
+//! Cargo feature is enabled.
 
 #![deny(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 pub mod crc8;
 pub mod i2c;
+#[cfg(feature = "embedded-hal-async")]
+pub mod i2c_async;
