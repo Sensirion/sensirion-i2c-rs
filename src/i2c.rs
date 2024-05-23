@@ -5,13 +5,13 @@ use embedded_hal::i2c;
 
 /// All possible errors in this crate
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub enum Error<I: i2c::I2c> {
+pub enum Error<I: i2c::ErrorType> {
     I2cWrite(I::Error),
     I2cRead(I::Error),
     Crc,
 }
 
-impl<I: i2c::I2c> From<crc8::Error> for Error<I> {
+impl<I: i2c::ErrorType> From<crc8::Error> for Error<I> {
     fn from(err: crc8::Error) -> Error<I> {
         match err {
             crc8::Error::CrcError => Error::Crc,
