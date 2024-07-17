@@ -4,6 +4,8 @@ This project follows [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] (2024-07-17)
+* Add support for embedded-hal-async
 
 ## [0.3.0] (2022-11-28)
 * Update to rust 1.63 for build an test and rust 2021 edition
@@ -32,7 +34,8 @@ This project follows [semantic versioning](https://semver.org/).
  * Initial version which implements the CRC-8 algorithm commonly used by
    Sensirion's sensors and a few I2C helper functions.
 
-[Unreleased]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.3.0..master
+[Unreleased]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.4.0..master
+[0.4.0]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.3.0..v0.4.0
 [0.3.0]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.1.1..v0.2.0
 [0.1.1]: https://github.com/Sensirion/sensirion-i2c-rs/compare/v0.1.0..v0.1.1
